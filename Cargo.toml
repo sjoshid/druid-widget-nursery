@@ -10,13 +10,13 @@ async = ["tokio/rt", "futures", "flume"]
 hot-reload = ["libloading", "notify5", "rand"]
 
 [dependencies.druid]
-git = "https://github.com/linebender/druid"
-rev = "f19ddf1" # update this when upgrading to newer druid
+path = "C:/Users/joshi/OneDrive/druid/druid"
 features = ["im"]
 # and update examples/hot_reload/Cargo.toml as well
 
 [dependencies]
 log = "0.4.11"
+LevenshteinDistance = { path = "C:/Users/joshi/OneDrive/LevenshteinDistance" }
 
 # theme loader
 # TODO: update this to 5.0

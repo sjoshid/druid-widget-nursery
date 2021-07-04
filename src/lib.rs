@@ -40,6 +40,7 @@ mod tree;
 #[cfg(feature = "async")]
 mod future_widget;
 
+mod autocomplete_widget;
 #[cfg(feature = "hot-reload")]
 pub mod hot_reload;
 mod list_filter;
@@ -61,3 +62,5 @@ pub use tree::{Tree, TreeNode, Wedge};
 
 #[cfg(feature = "async")]
 pub use future_widget::{Delegate as AsyncDelegate, FutureWidget};
+
+pub use autocomplete_widget::{AutoCompleteTextBox, FuzzySearchData};
