@@ -5,7 +5,7 @@ use druid::widget::{
     Button, CrossAxisAlignment, Flex, Label, List, RadioGroup, Scroll, TextBox, WidgetExt,
 };
 
-use crate::DROP;
+use crate::{CLOSE_DROP, DROP};
 use druid::{
     AppLauncher, ArcStr, BoxConstraints, Color, Data, Env, Event, EventCtx, LayoutCtx, Lens,
     LifeCycle, LifeCycleCtx, PaintCtx, Size, UnitPoint, UpdateCtx, Widget, WindowDesc,
@@ -19,6 +19,7 @@ pub struct FuzzySearchData {
     pub word: String,
     pub suggestions: Arc<Vec<ArcStr>>,
     pub tolerance: usize,
+    pub existing_words: Vector<String>,
 }
 
 pub struct AutoCompleteTextBox {
@@ -37,31 +38,37 @@ impl AutoCompleteTextBox {
 
 impl Widget<FuzzySearchData> for AutoCompleteTextBox {
     fn event(&mut self, ctx: &mut EventCtx, event: &Event, data: &mut FuzzySearchData, env: &Env) {
-        self.textbox.event(ctx, event, data.word.borrow_mut(), env);
         match event {
             Event::KeyUp(e) if e.key.ne(&Key::Enter) => {
                 if data.word.len() > 3 {
-                    //let mut result = self.bk_tree.fuzzy_search(data.word.as_str(), 2);
-                    let mut result = vec!["sujit"];
-                    println!("size of suggestions {}", data.suggestions.len());
-                    //not good to clone. what to do? :(
-                    let suggestions = Arc::make_mut(&mut data.suggestions);
-                    println!("size of result {}", result.len());
-                    //suggestions.clear();
-                    result
-                        .iter()
-                        .for_each(|s| suggestions.push(ArcStr::from(*s)));
-                    dbg!("Drop called");
-                    ctx.submit_command(DROP);
+                    let result = self
+                        .bk_tree
+                        .fuzzy_search(data.word.as_str(), data.tolerance);
+                    if !result.is_empty() {
+                        let mut result_vec: Vec<ArcStr> = Vec::with_capacity(result.len());
+                        for r in result.into_iter() {
+                            let s = String::from(r);
+                            result_vec.push(s.into());
+                        }
+                        data.suggestions = Arc::new(result_vec);
+                        dbg!("Drop called with size {}", data.suggestions.len());
+                        ctx.submit_command(DROP);
+                    }
                 }
             }
             Event::KeyUp(e) if e.key.eq(&Key::Enter) => {
                 if data.word.len() > 3 {
+                    dbg!("adding word to tree");
                     self.bk_tree.add_word(data.word.as_str());
+                    dbg!("adding word to existing words");
+                    data.existing_words.push_back(data.word.clone());
                     println!("Added {} to BKTree", data.word);
                 }
             }
-            _ => {}
+            Event::Timer(id) => {}
+            _ => {
+                self.textbox.event(ctx, event, data.word.borrow_mut(), env);
+            }
         }
     }
 
@@ -73,9 +80,9 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
         env: &Env,
     ) {
         match event {
-            LifeCycle::HotChanged(hc) => {
-                if *hc {
-                    ctx.submit_command(DROP);
+            LifeCycle::FocusChanged(hc) => {
+                if !*hc {
+                    ctx.submit_command(CLOSE_DROP);
                 }
             }
             _ => {}

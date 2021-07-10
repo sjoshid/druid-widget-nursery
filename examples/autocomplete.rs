@@ -3,11 +3,11 @@ use druid::lens::InArc;
 use druid::piet::TextStorage;
 use druid::text::ParseFormatter;
 use druid::widget::{
-    CrossAxisAlignment, Dropdown, Flex, Label, List, RadioGroup, Scroll, TextBox, ValueTextBox,
+    CrossAxisAlignment, Flex, Label, List, RadioGroup, Scroll, TextBox, ValueTextBox,
 };
 use druid::{AppLauncher, ArcStr, Color, UnitPoint, Widget, WidgetExt, WindowDesc};
 use druid::{Size, WidgetId};
-use druid_widget_nursery::{AutoCompleteTextBox, FuzzySearchData};
+use druid_widget_nursery::{AutoCompleteTextBox, Dropdown, FuzzySearchData};
 use std::sync::{Arc, Mutex};
 
 const ID_ONE: WidgetId = WidgetId::reserved(1);
@@ -28,15 +28,13 @@ fn main_widget() -> impl Widget<FuzzySearchData> {
                         })
                         .align_vertical(UnitPoint::LEFT)
                         .padding(10.0)
-                        .expand()
-                        .height(50.0)
                         .background(Color::rgb(0.5, 0.5, 0.5))
                     })
                     .lens(FuzzySearchData::suggestions)
                 },
                 Size::from((100., 70.)),
             )
-            .align_left()
+            .align_left(),
         )
         /*.with_child(
             ValueTextBox::new(TextBox::new(), ParseFormatter::new()).lens(FuzzySearchData::word),

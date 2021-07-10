@@ -15,6 +15,7 @@ pub struct Dropdown<T> {
 }
 
 pub const DROP: Selector<()> = Selector::new("druid-widget-nursery.dropdown.drop");
+pub const CLOSE_DROP: Selector<()> = Selector::new("druid-widget-nursery.dropdown.close.drop");
 
 impl<T: Data> Dropdown<T> {
     pub fn new<DW: Widget<T> + 'static>(
@@ -51,7 +52,11 @@ impl<T: Data> Widget<T> for Dropdown<T> {
         match event {
             Event::Command(n) if n.is(DROP) => {
                 let widget = (self.drop)(data, env);
-                let origin = ctx.to_screen(Point::new(0., ctx.size().height));
+                //let origin = ctx.to_screen(Point::new(0., ctx.size().height));
+                let origin = Point::new(
+                    ctx.window_origin().x,
+                    ctx.window_origin().y + ctx.size().height,
+                );
                 self.window = Some(
                     ctx.new_sub_window(
                         WindowConfig::default()
@@ -66,6 +71,13 @@ impl<T: Data> Widget<T> for Dropdown<T> {
                     ),
                 );
                 ctx.set_handled();
+            }
+            Event::Command(n) if n.is(CLOSE_DROP) => {
+                if let Some(window) = self.window {
+                    dbg!("closing dropdown");
+                    ctx.submit_command(CLOSE_WINDOW.to(window));
+                    self.window = None;
+                }
             }
             _ => {
                 self.header.event(ctx, event, data, env);
@@ -83,6 +95,7 @@ impl<T: Data> Widget<T> for Dropdown<T> {
 
     fn layout(&mut self, ctx: &mut LayoutCtx, bc: &BoxConstraints, data: &T, env: &Env) -> Size {
         if let Some(window) = self.window {
+            dbg!("closing dropdown");
             ctx.submit_command(CLOSE_WINDOW.to(window));
             self.window = None;
         }
@@ -104,18 +117,11 @@ impl<T: Data> Widget<T> for Dropped<T> {
     }
 
     fn lifecycle(&mut self, ctx: &mut LifeCycleCtx, event: &LifeCycle, data: &T, env: &Env) {
-        if let LifeCycle::HotChanged(false) = event {
-            ctx.window().close()
-        }
-
         self.child.lifecycle(ctx, event, data, env)
     }
 
     fn update(&mut self, ctx: &mut UpdateCtx, old_data: &T, data: &T, env: &Env) {
         self.child.update(ctx, old_data, data, env);
-        if !old_data.same(data) {
-            ctx.window().close()
-        }
     }
 
     fn layout(&mut self, ctx: &mut LayoutCtx, bc: &BoxConstraints, data: &T, env: &Env) -> Size {
