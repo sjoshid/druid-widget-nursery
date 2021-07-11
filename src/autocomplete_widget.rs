@@ -46,13 +46,13 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
                     let result = self
                         .bk_tree
                         .fuzzy_search(data.word.as_str(), data.tolerance);
-                    dbg!(result.len());
                     let mut result_vec: Vec<ArcStr> = Vec::with_capacity(result.len());
                     for r in result.into_iter() {
                         let s = String::from(r);
                         result_vec.push(s.into());
                     }
                     data.suggestions = Arc::new(result_vec);
+                    dbg!(data.suggestions.len());
                     if !self.dropdown_shown {
                         ctx.submit_command(DROP);
                         self.dropdown_shown = true;
@@ -65,7 +65,7 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
                     data.existing_words.push_back(data.word.clone());
                 }
             }
-            Event::Timer(id) => {}
+            Event::Timer(_id) => {}
             _ => {
                 self.textbox.event(ctx, event, data.word.borrow_mut(), env);
             }
