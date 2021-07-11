@@ -25,6 +25,7 @@ pub struct FuzzySearchData {
 pub struct AutoCompleteTextBox {
     textbox: TextBox<String>,
     bk_tree: BKTree,
+    dropdown_shown: bool,
 }
 
 impl AutoCompleteTextBox {
@@ -32,6 +33,7 @@ impl AutoCompleteTextBox {
         AutoCompleteTextBox {
             textbox: TextBox::new(),
             bk_tree: BKTree::new(""),
+            dropdown_shown: false,
         }
     }
 }
@@ -51,11 +53,10 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
                         result_vec.push(s.into());
                     }
                     data.suggestions = Arc::new(result_vec);
-                    /*if !self.dropdown_shown {
+                    if !self.dropdown_shown {
                         ctx.submit_command(DROP);
                         self.dropdown_shown = true;
-                    }*/
-                    ctx.submit_command(DROP);
+                    }
                 }
             }
             Event::KeyUp(e) if e.key.eq(&Key::Enter) => {
@@ -82,6 +83,7 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
             LifeCycle::FocusChanged(hc) => {
                 if !*hc {
                     ctx.submit_command(CLOSE_DROP);
+                    self.dropdown_shown = false;
                 }
             }
             _ => {}

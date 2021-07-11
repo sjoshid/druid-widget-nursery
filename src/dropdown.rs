@@ -74,7 +74,6 @@ impl<T: Data> Widget<T> for Dropdown<T> {
             }
             Event::Command(n) if n.is(CLOSE_DROP) => {
                 if let Some(window) = self.window {
-                    dbg!("closing dropdown");
                     ctx.submit_command(CLOSE_WINDOW.to(window));
                     self.window = None;
                 }
