@@ -44,25 +44,24 @@ impl Widget<FuzzySearchData> for AutoCompleteTextBox {
                     let result = self
                         .bk_tree
                         .fuzzy_search(data.word.as_str(), data.tolerance);
-                    if !result.is_empty() {
-                        let mut result_vec: Vec<ArcStr> = Vec::with_capacity(result.len());
-                        for r in result.into_iter() {
-                            let s = String::from(r);
-                            result_vec.push(s.into());
-                        }
-                        data.suggestions = Arc::new(result_vec);
-                        dbg!("Drop called with size {}", data.suggestions.len());
-                        ctx.submit_command(DROP);
+                    dbg!(result.len());
+                    let mut result_vec: Vec<ArcStr> = Vec::with_capacity(result.len());
+                    for r in result.into_iter() {
+                        let s = String::from(r);
+                        result_vec.push(s.into());
                     }
+                    data.suggestions = Arc::new(result_vec);
+                    /*if !self.dropdown_shown {
+                        ctx.submit_command(DROP);
+                        self.dropdown_shown = true;
+                    }*/
+                    ctx.submit_command(DROP);
                 }
             }
             Event::KeyUp(e) if e.key.eq(&Key::Enter) => {
                 if data.word.len() > 3 {
-                    dbg!("adding word to tree");
                     self.bk_tree.add_word(data.word.as_str());
-                    dbg!("adding word to existing words");
                     data.existing_words.push_back(data.word.clone());
-                    println!("Added {} to BKTree", data.word);
                 }
             }
             Event::Timer(id) => {}

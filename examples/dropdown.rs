@@ -54,8 +54,8 @@ fn main_widget() -> impl Widget<DropDownState> {
             .fix_width(200.)
             .fix_height(200.),
         )
-        //.debug_paint_layout()
         .lens(DropDownState::fs)
+        //.debug_paint_layout()
 }
 
 pub fn main() {

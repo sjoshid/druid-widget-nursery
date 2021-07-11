@@ -94,11 +94,6 @@ impl<T: Data> Widget<T> for Dropdown<T> {
     }
 
     fn layout(&mut self, ctx: &mut LayoutCtx, bc: &BoxConstraints, data: &T, env: &Env) -> Size {
-        if let Some(window) = self.window {
-            dbg!("closing dropdown");
-            ctx.submit_command(CLOSE_WINDOW.to(window));
-            self.window = None;
-        }
         self.header.layout(ctx, bc, data, env)
     }
 
