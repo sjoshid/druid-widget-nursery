@@ -1,60 +1,76 @@
-use druid::im::{vector, Vector};
-use druid::lens::InArc;
-use druid::piet::TextStorage;
-use druid::text::ParseFormatter;
+use druid::im::Vector;
 use druid::widget::{
-    CrossAxisAlignment, Flex, Label, List, RadioGroup, Scroll, TextBox, ValueTextBox,
+    Button, CrossAxisAlignment, Flex, Label, List, RadioGroup, Scroll, TextBox, WidgetExt,
 };
-use druid::{AppLauncher, ArcStr, Color, UnitPoint, Widget, WidgetExt, WindowDesc};
-use druid::{Size, WidgetId};
-use druid_widget_nursery::{AutoCompleteTextBox, Dropdown, FuzzySearchData};
-use std::sync::{Arc, Mutex};
+use druid::{
+    AppLauncher, ArcStr, Color, Data, Env, EventCtx, Lens, Size, UnitPoint, Widget, WindowDesc,
+};
+use druid_widget_nursery::{AutoCompleteTextBox, Dropdown, FuzzySearchData, DROP};
+use std::sync::Arc;
 
-const ID_ONE: WidgetId = WidgetId::reserved(1);
+#[derive(Data, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
+enum Fruit {
+    Apple,
+    Pear,
+    Orange,
+}
 
-fn main_widget() -> impl Widget<FuzzySearchData> {
+#[derive(Data, Clone, Lens)]
+struct DropDownState {
+    fruit: Fruit,
+    place: String,
+    fs: FuzzySearchData,
+}
+
+fn main_widget() -> impl Widget<DropDownState> {
     Flex::column()
         .cross_axis_alignment(CrossAxisAlignment::Start)
-        .with_spacer(10.)
-        .with_child(
-            Dropdown::new_sized(
-                Flex::row()
-                    .with_child(AutoCompleteTextBox::new().with_id(ID_ONE))
-                    .with_flex_spacer(1.),
-                |_, _| {
-                    List::new(|| {
-                        Label::new(|item: &ArcStr, _env: &_| {
-                            format!("{}", String::from(item.as_str()))
-                        })
-                        .align_vertical(UnitPoint::LEFT)
-                        .padding(10.0)
-                        .background(Color::rgb(0.5, 0.5, 0.5))
-                    })
+        .with_child(Label::new("Autocomplete dropdown. "))
+        //.with_spacer(10.)
+        .with_child(Dropdown::new_sized(
+            AutoCompleteTextBox::new(),
+            |_, _| {
+                Scroll::new(List::new(|| {
+                    Label::new(|item: &ArcStr, _env: &_| format!("{}", item)).padding(10.0)
+                }))
+                    .vertical()
                     .lens(FuzzySearchData::suggestions)
-                },
-                Size::from((100., 70.)),
+            },
+            Size::from((100., 70.)),
+        ))
+        .with_child(Label::new("Label that'll be overlapped by dropdown"))
+        .with_spacer(80.)
+        .with_child(Label::new("Words in BK tree"))
+        .with_child(
+            Scroll::new(
+                List::new(|| Label::new(|item: &String, _env: &_| format!("{}", item)))
+                    .lens(FuzzySearchData::existing_words),
             )
-            .align_left(),
+                .fix_width(200.)
+                .fix_height(200.),
         )
-        /*.with_child(
-            ValueTextBox::new(TextBox::new(), ParseFormatter::new()).lens(FuzzySearchData::word),
-        )*/
-        .padding(10.)
-        .fix_width(250.)
-        .debug_widget_id()
+        .lens(DropDownState::fs)
+    //.debug_paint_layout()
 }
 
 pub fn main() {
     let main_window = WindowDesc::new(main_widget())
         .title("Dropdown")
-        .window_size((250., 300.));
+        .window_size((250., 500.));
 
-    let s = String::from("sujit");
     // create the initial app state
-    let initial_state = FuzzySearchData {
+    let fs = FuzzySearchData {
         word: String::new(),
-        suggestions: Arc::new(vec![s.into()]),
+        suggestions: Arc::new(vec![]),
         tolerance: 3,
+        existing_words: Vector::new(),
+    };
+
+    // create the initial app state
+    let initial_state = DropDownState {
+        fruit: Fruit::Apple,
+        place: "California".to_owned(),
+        fs,
     };
 
     // start the application
