@@ -10,7 +10,7 @@ async = ["tokio/rt", "futures", "flume"]
 hot-reload = ["libloading", "notify5", "rand"]
 
 [dependencies.druid]
-path = "C:\\Users\\joshi\\OneDrive\\druid\\druid"
+path = "C:\\Users\\joshi\\Dropbox\\druid\\druid"
 #git = "https://github.com/sjoshid/druid.git"
 #branch = "master"
 #branch = "autocomplete"
