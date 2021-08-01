@@ -10,7 +10,7 @@ async = ["tokio/rt", "futures", "flume"]
 hot-reload = ["libloading", "notify5", "rand"]
 
 [dependencies.druid]
-path = "C:\\Users\\joshi\\Dropbox\\druid\\druid"
+path = "../druid/druid"
 #git = "https://github.com/sjoshid/druid.git"
 #branch = "master"
 #branch = "autocomplete"
@@ -19,7 +19,7 @@ features = ["im"]
 
 [dependencies]
 log = "0.4.11"
-LevenshteinDistance = { path = "C:/Users/joshi/OneDrive/LevenshteinDistance" }
+LevenshteinDistance = { path = "../LevenshteinDistance" }
 
 # theme loader
 # TODO: update this to 5.0

@@ -33,24 +33,35 @@ fn main_widget() -> impl Widget<DropDownState> {
                 Scroll::new(List::new(|| {
                     Label::new(|item: &ArcStr, _env: &_| format!("{}", item)).padding(10.0)
                 }))
-                    .vertical()
-                    .lens(FuzzySearchData::suggestions)
+                .vertical()
+                .lens(FuzzySearchData::suggestions)
             },
             Size::from((100., 70.)),
         ))
         .with_child(Label::new("Label that'll be overlapped by dropdown"))
         .with_spacer(80.)
         .with_child(Label::new("Words in BK tree"))
+        .with_child(Dropdown::new_sized(
+            AutoCompleteTextBox::new(),
+            |_, _| {
+                Scroll::new(List::new(|| {
+                    Label::new(|item: &ArcStr, _env: &_| format!("{}", item)).padding(10.0)
+                }))
+                    .vertical()
+                    .lens(FuzzySearchData::suggestions)
+            },
+            Size::from((100., 70.)),
+        ))
         .with_child(
             Scroll::new(
                 List::new(|| Label::new(|item: &String, _env: &_| format!("{}", item)))
                     .lens(FuzzySearchData::existing_words),
             )
-                .fix_width(200.)
-                .fix_height(200.),
+            .fix_width(200.)
+            .fix_height(200.),
         )
         .lens(DropDownState::fs)
-    //.debug_paint_layout()
+        .debug_paint_layout()
 }
 
 pub fn main() {
