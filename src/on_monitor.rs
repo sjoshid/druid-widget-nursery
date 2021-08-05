@@ -59,7 +59,7 @@ impl<T: Data, W: Widget<T>> Widget<T> for OnMonitor<W> {
         match ev {
             LifeCycle::Size(_) | LifeCycle::Internal(InternalLifeCycle::ParentWindowOrigin) => {
                 let w = ctx.window();
-                let rect = Rect::from_origin_size(ctx.window_origin(), ctx.size());
+                let rect = Rect::from_origin_size(ctx.widget_origin_in_window_coordinates(), ctx.size());
                 let current_window_pos = w.get_position();
                 let bounds = screen_bounds(&self.parent);
                 let nudge = calc_nudge(rect + current_window_pos.to_vec2(), bounds);

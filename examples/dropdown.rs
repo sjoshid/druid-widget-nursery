@@ -43,8 +43,8 @@ fn main_widget() -> impl Widget<DropDownState> {
                         RadioGroup::new(places)
                     },
                 )
-                    .align_left()
-                    .lens(DropDownState::place),
+                .align_left()
+                .lens(DropDownState::place),
             )
             .with_child(
                 Dropdown::new(
@@ -63,8 +63,8 @@ fn main_widget() -> impl Widget<DropDownState> {
                         ])
                     },
                 )
-                    .align_left()
-                    .lens(DropDownState::fruit),
+                .align_left()
+                .lens(DropDownState::fruit),
             )
             .with_spacer(200.)
             .with_child(
@@ -80,8 +80,8 @@ fn main_widget() -> impl Widget<DropDownState> {
                     },
                     druid::Size::new(100., 400.),
                 )
-                    .align_left()
-                    .lens(DropDownState::fruit),
+                .align_left()
+                .lens(DropDownState::fruit),
             )
             .with_spacer(100.)
             .with_child(Label::new(|d: &DropDownState, _: &Env| {
@@ -90,7 +90,7 @@ fn main_widget() -> impl Widget<DropDownState> {
             .padding(10.)
             .fix_width(250.),
     )
-        .fix_height(250.0)
+    .fix_height(250.0)
 }
 
 pub fn main() {

@@ -52,11 +52,22 @@ impl<T: Data> Widget<T> for Dropdown<T> {
         match event {
             Event::Command(n) if n.is(DROP) => {
                 let widget = (self.drop)(data, env);
-                //let origin = ctx.to_screen(Point::new(0., ctx.size().height));
-                let origin = Point::new(
+
+                /*let origin = ctx.to_screen(Point::new(0., ctx.size().height));
+                dbg!(origin);
+                let origin = ctx.convert_point_from_widget_coordinates_to_window(Point::new(0., ctx.size().height));
+                dbg!(origin);*/
+                let origin = ctx.widget_origin_in_window_coordinates();
+                dbg!(ctx.widget_id(), origin);
+                let origin = ctx.widget_origin_in_window_coordinates() + Point::new(0., ctx.size().height).to_vec2(); // doesnt work on laptop
+                dbg!(ctx.widget_id(), origin);
+                /*let origin = ctx.widget_origin();
+                dbg!(ctx.widget_id(), origin);*/
+
+                /*let origin = Point::new(
                     ctx.window_origin().x,
                     ctx.window_origin().y + ctx.size().height,
-                );
+                );*/
                 self.window = Some(
                     ctx.new_sub_window(
                         WindowConfig::default()
@@ -97,6 +108,8 @@ impl<T: Data> Widget<T> for Dropdown<T> {
     }
 
     fn paint(&mut self, ctx: &mut PaintCtx, data: &T, env: &Env) {
+        let origin = ctx.widget_origin_in_window_coordinates();
+        dbg!(ctx.widget_id(), origin);
         self.header.paint(ctx, data, env)
     }
 }

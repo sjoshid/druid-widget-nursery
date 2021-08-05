@@ -24,7 +24,7 @@ struct DropDownState {
 
 fn main_widget() -> impl Widget<DropDownState> {
     Flex::column()
-        .cross_axis_alignment(CrossAxisAlignment::Start)
+        //.cross_axis_alignment(CrossAxisAlignment::Start)
         .with_child(Label::new("Autocomplete dropdown. "))
         //.with_spacer(10.)
         .with_child(Dropdown::new_sized(
@@ -36,7 +36,7 @@ fn main_widget() -> impl Widget<DropDownState> {
                 .vertical()
                 .lens(FuzzySearchData::suggestions)
             },
-            Size::from((100., 70.)),
+            Size::from((100., 50.)),
         ))
         .with_child(Label::new("Label that'll be overlapped by dropdown"))
         .with_spacer(80.)
@@ -50,7 +50,7 @@ fn main_widget() -> impl Widget<DropDownState> {
                     .vertical()
                     .lens(FuzzySearchData::suggestions)
             },
-            Size::from((100., 70.)),
+            Size::from((200., 200.)),
         ))
         .with_child(
             Scroll::new(
