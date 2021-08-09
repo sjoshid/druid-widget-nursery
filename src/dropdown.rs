@@ -51,11 +51,14 @@ impl<T: Data> Widget<T> for Dropdown<T> {
         match event {
             Event::Command(n) if n.is(DROP) => {
                 let widget = (self.drop)(data, env);
-                let origin = ctx.to_screen(Point::new(0., ctx.size().height));
+                let origin = Point::new(
+                    ctx.window_origin().x,
+                    ctx.window_origin().y + ctx.size().height,
+                );
                 self.window = Some(
                     ctx.new_sub_window(
                         WindowConfig::default()
-                            .set_level(WindowLevel::DropDown)
+                            .set_level(WindowLevel::DropDown(ctx.window().clone()))
                             .set_position(origin)
                             .window_size_policy(WindowSizePolicy::Content)
                             .resizable(false)
